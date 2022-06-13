@@ -17,6 +17,6 @@ jobs:
           name: digitallyinduced
       - uses: superfly/flyctl-actions/setup-flyctl@master
       # You'll probably need a prod Config.hs file
-      # - run: mv ./Config/Config.hs.prod ./Config/Config.hs
+      - run: mv ./Config/Config.hs.prod ./Config/Config.hs
       - run: docker load < $(nix-build ./docker.nix --option sandbox false)
       - run: flyctl deploy -i app:$(docker image ls "app:*" -a --format 'table {{.Tag}}' | sed -sn 2p)
