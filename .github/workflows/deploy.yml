@@ -1,0 +1,22 @@
+name: "Build Image"
+on:
+  pull_request:
+  push:
+env:
+  FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2.4.0
+      - uses: cachix/install-nix-action@v17
+        with:
+          nix_path: nixpkgs=channel:nixos-unstable
+      - uses: cachix/cachix-action@v10
+        with:
+          name: digitallyinduced
+      - uses: superfly/flyctl-actions/setup-flyctl@master
+      # You'll probably need a prod Config.hs file
+      - run: mv ./Config/Config.hs.prod ./Config/Config.hs
+      - run: docker load < $(nix-build ./docker.nix --option sandbox false)
+      - run: flyctl deploy -i app:$(docker image ls "app:*" -a --format 'table {{.Tag}}' | sed -sn 2p)
