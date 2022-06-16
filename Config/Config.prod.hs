@@ -1,10 +1,11 @@
 module Config where
 
-import IHP.Prelude
 import IHP.Environment
 import IHP.FrameworkConfig
+import IHP.Prelude
 
 config :: ConfigBuilder
 config = do
-    option Development
-    option (AppHostname "127.0.0.1")
+  option Production
+  option (AppHostname "blog.com")
+  option (BaseUrl "https://blog.com")
